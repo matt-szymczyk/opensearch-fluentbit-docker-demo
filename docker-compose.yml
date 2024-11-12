@@ -59,6 +59,33 @@ services:
     networks:
       - opensearch-net
 
+  python-app:
+    build: 
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: python-app
+    volumes:
+      - ./app/logs:/app/logs
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch-node1
+      - opensearch-node2
+
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    container_name: fluent-bit
+    volumes:
+      - ./app/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./app/parsers.conf:/fluent-bit/etc/parsers.conf
+      - ./app/logs:/app/logs
+    networks:
+      - opensearch-net
+    depends_on:
+      - opensearch-node1
+      - opensearch-node2
+      - python-app
+
 volumes:
   opensearch-data1:
   opensearch-data2:
