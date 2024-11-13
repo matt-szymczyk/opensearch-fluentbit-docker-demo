@@ -86,9 +86,23 @@ services:
       - opensearch-node2
       - python-app
 
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - opensearch-net
+
 volumes:
   opensearch-data1:
   opensearch-data2:
+  mongodb_data:
 
 networks:
   opensearch-net:
