@@ -79,16 +79,32 @@ services:
       - ./app/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
       - ./app/parsers.conf:/fluent-bit/etc/parsers.conf
       - ./app/logs:/app/logs
+      - ./app/logs_mongodb:/app/logs_mongodb
     networks:
       - opensearch-net
     depends_on:
       - opensearch-node1
       - opensearch-node2
       - python-app
-
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./app/logs_mongodb:/app/logs_mongodb
+    command: mongod --logpath  /app/logs_mongodb/mongodb.log
+    networks:
+      - opensearch-net
+      
 volumes:
   opensearch-data1:
   opensearch-data2:
+  mongodb_data:
 
 networks:
   opensearch-net:
